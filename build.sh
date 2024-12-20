@@ -85,7 +85,7 @@ touch "$PREFIX/foo"
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 ARCHIVE_NAME="$TARGET-$TIMESTAMP.tar.bz2"
 mkdir -p archive/$TARGET
-mv "$PREFIX/*" "archive/$TARGET/"
+mv $PREFIX/* "archive/$TARGET/"
 tar -cf - -C archive $TARGET | pbzip2 -c -p$(nproc) > $ARCHIVE_NAME
 
 # Check if GITHUB_TOKEN is available
