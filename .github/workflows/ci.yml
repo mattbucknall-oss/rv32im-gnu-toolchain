@@ -17,6 +17,10 @@ jobs:
       - name: Log in to GitHub Docker Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Pull the latest Docker image
+        run: |
+          docker pull ghcr.io/${{ github.repository_owner }}/build-environment-x64:latest
+
       - name: Run build.sh in container
         run: |
           docker run --rm \
