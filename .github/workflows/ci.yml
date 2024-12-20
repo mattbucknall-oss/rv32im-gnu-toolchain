@@ -19,13 +19,13 @@ jobs:
           docker run --rm \
             -v "${{ github.workspace }}:/workspace" \
             -w /workspace \
-            -e GITHUB_ACTIONS="${{ env.GITHUB_ACTIONS }}" \
-            -e GITHUB_ACTOR="${{ env.GITHUB_ACTOR }}" \
-            -e GITHUB_REPOSITORY="${{ env.GITHUB_REPOSITORY }}" \
-            -e GITHUB_REF="${{ env.GITHUB_REF }}" \
-            -e GITHUB_SHA="${{ env.GITHUB_SHA }}" \
-            -e GITHUB_RUN_ID="${{ env.GITHUB_RUN_ID }}" \
-            -e GITHUB_RUN_NUMBER="${{ env.GITHUB_RUN_NUMBER }}" \
-            -e GITHUB_JOB="${{ env.GITHUB_JOB }}" \
+            -e GITHUB_ACTIONS=true \
+            -e GITHUB_ACTOR="${{ github.actor }}" \
+            -e GITHUB_REPOSITORY="${{ github.repository }}" \
+            -e GITHUB_REF="${{ github.ref }}" \
+            -e GITHUB_SHA="${{ github.sha }}" \
+            -e GITHUB_RUN_ID="${{ github.run_id }}" \
+            -e GITHUB_RUN_NUMBER="${{ github.run_number }}" \
+            -e GITHUB_JOB="${{ github.job }}" \
             ubuntu:latest \
             /bin/bash -c "./build.sh"
