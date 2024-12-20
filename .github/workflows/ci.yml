@@ -14,6 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Log in to GitHub Docker Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - name: Run build.sh in container
         run: |
           docker run --rm \
@@ -27,5 +30,5 @@ jobs:
             -e GITHUB_RUN_ID="${{ github.run_id }}" \
             -e GITHUB_RUN_NUMBER="${{ github.run_number }}" \
             -e GITHUB_JOB="${{ github.job }}" \
-            ubuntu:latest \
+            ghcr.io/${{ github.repository_owner }}/build-environment-x64:latest \
             /bin/bash -c "./build.sh"
