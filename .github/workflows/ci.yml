@@ -12,10 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        run: |
-          git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git .
-          git fetch --prune --unshallow
-          git checkout $GITHUB_REF
+        uses: actions/checkout@v4
 
       - name: Run build.sh in container
         run: |
