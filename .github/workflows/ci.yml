@@ -6,6 +6,9 @@ on:
       - main
       - development
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: [self-hosted, Linux, X64]
