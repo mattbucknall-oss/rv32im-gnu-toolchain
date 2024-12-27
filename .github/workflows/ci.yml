@@ -14,25 +14,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to GitHub Docker Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Pull the latest Docker image
-        run: |
-          docker pull ghcr.io/${{ github.repository_owner }}/build-environment-x64:latest
-
-      - name: Run build.sh in container
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/workspace" \
-            -w /workspace \
-            -e GITHUB_ACTIONS=true \
-            -e GITHUB_ACTOR="${{ github.actor }}" \
-            -e GITHUB_REPOSITORY="${{ github.repository }}" \
-            -e GITHUB_REF="${{ github.ref }}" \
-            -e GITHUB_SHA="${{ github.sha }}" \
-            -e GITHUB_RUN_ID="${{ github.run_id }}" \
-            -e GITHUB_RUN_NUMBER="${{ github.run_number }}" \
-            -e GITHUB_JOB="${{ github.job }}" \
-            ghcr.io/${{ github.repository_owner }}/build-environment-x64:latest \
-            /bin/bash -c "./build.sh"
+      - name: Run build script
+        run: ./build.sh
