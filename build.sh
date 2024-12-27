@@ -13,70 +13,70 @@ export PREFIX=$PWD/build-root
 export ARCH=rv32im
 export PATH=$PREFIX/bin:$PATH
 
-# # create build directories
-# mkdir -p build/binutils
-# mkdir -p build/gcc
-# mkdir -p build/newlib
-# mkdir -p build/gdb
+# create build directories
+mkdir -p build/binutils
+mkdir -p build/gcc
+mkdir -p build/newlib
+mkdir -p build/gdb
 
-# # extract sources
-# tar -xf packages/binutils-*.tar.* -C build/binutils --strip-components=1 &
-# tar -xf packages/gcc-*.tar.* -C build/gcc --strip-components=1 &
-# tar -xf packages/newlib-*.tar.* -C build/newlib --strip-components=1 &
-# tar -xf packages/gdb-*.tar.* -C build/gdb --strip-components=1 &
-# wait
+# extract sources
+tar -xf packages/binutils-*.tar.* -C build/binutils --strip-components=1 &
+tar -xf packages/gcc-*.tar.* -C build/gcc --strip-components=1 &
+tar -xf packages/newlib-*.tar.* -C build/newlib --strip-components=1 &
+tar -xf packages/gdb-*.tar.* -C build/gdb --strip-components=1 &
+wait
 
-# # build binutils
-# pushd build/binutils
-# mkdir build && cd build
-# ../configure --target=$TARGET --prefix=$PREFIX \
-#     --with-arch=$ARCH --disable-werror
-# make -j$(nproc)
-# make install
-# popd
+# build binutils
+pushd build/binutils
+mkdir build && cd build
+../configure --target=$TARGET --prefix=$PREFIX \
+    --with-arch=$ARCH --disable-werror
+make -j$(nproc)
+make install
+popd
 
-# # build gcc (stage 1)
-# pushd build/gcc
-# ./contrib/download_prerequisites
-# mkdir build1 && cd build1
-# ../configure --target=$TARGET --prefix=$PREFIX \
-#     --with-arch=$ARCH --enable-languages=c --disable-fixincludes \
-#     --without-headers --disable-shared --disable-threads \
-#     --disable-libatomic --disable-libgomp --disable-libmudflap \
-#     --disable-libquadmath --disable-libssp --disable-libstdcxx \
-#     --disable-nls
-# make all-gcc -j$(nproc)
-# make install-gcc
-# popd
+# build gcc (stage 1)
+pushd build/gcc
+./contrib/download_prerequisites
+mkdir build1 && cd build1
+../configure --target=$TARGET --prefix=$PREFIX \
+    --with-arch=$ARCH --enable-languages=c --disable-fixincludes \
+    --without-headers --disable-shared --disable-threads \
+    --disable-libatomic --disable-libgomp --disable-libmudflap \
+    --disable-libquadmath --disable-libssp --disable-libstdcxx \
+    --disable-nls
+make all-gcc -j$(nproc)
+make install-gcc
+popd
 
-# # build newlib
-# pushd build/newlib
-# mkdir build && cd build
-# ../configure --target=$TARGET --prefix=$PREFIX \
-#     --with-arch=$ARCH
-# make -j$(nproc)
-# make install
-# popd
+# build newlib
+pushd build/newlib
+mkdir build && cd build
+../configure --target=$TARGET --prefix=$PREFIX \
+    --with-arch=$ARCH
+make -j$(nproc)
+make install
+popd
 
-# # build gcc (stage 2)
-# pushd build/gcc
-# mkdir build2 && cd build2
-# ../configure --target=$TARGET --prefix=$PREFIX \
-#     --with-arch=$ARCH --enable-languages=c,c++ --disable-fixincludes \
-#     --disable-shared --disable-threads --disable-libssp \
-#     --disable-nls --with-newlib
-# make -j$(nproc)
-# make install
-# popd
+# build gcc (stage 2)
+pushd build/gcc
+mkdir build2 && cd build2
+../configure --target=$TARGET --prefix=$PREFIX \
+    --with-arch=$ARCH --enable-languages=c,c++ --disable-fixincludes \
+    --disable-shared --disable-threads --disable-libssp \
+    --disable-nls --with-newlib
+make -j$(nproc)
+make install
+popd
 
-# # build gdb
-# pushd build/gdb
-# mkdir build && cd build
-# ../configure --target=$TARGET --prefix=$PREFIX \
-#     --with-arch=$ARCH --disable-werror
-# make -j$(nproc)
-# make install
-# popd
+# build gdb
+pushd build/gdb
+mkdir build && cd build
+../configure --target=$TARGET --prefix=$PREFIX \
+    --with-arch=$ARCH --disable-werror
+make -j$(nproc)
+make install
+popd
 
 mkdir -p $PREFIX
 touch "$PREFIX/foo"
