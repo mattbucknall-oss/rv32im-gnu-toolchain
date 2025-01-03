@@ -11,6 +11,7 @@ export TARGET=riscv32-unknown-elf
 export NAME=gcc-$TARGET
 export PREFIX=$PWD/build-root
 export ARCH=rv32im
+export ABI=ilp32
 export PATH=$PREFIX/bin:$PATH
 
 # create build directories
@@ -30,7 +31,7 @@ wait
 pushd build/binutils
 mkdir build && cd build
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --disable-werror
+    --with-arch=$ARCH --with-abi=$ABI --disable-werror
 make -j$(nproc)
 make install
 popd
@@ -40,7 +41,7 @@ pushd build/gcc
 ./contrib/download_prerequisites
 mkdir build1 && cd build1
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --enable-languages=c --disable-fixincludes \
+    --with-arch=$ARCH --with-abi=$ABI --enable-languages=c --disable-fixincludes \
     --without-headers --disable-shared --disable-threads \
     --disable-libatomic --disable-libgomp --disable-libmudflap \
     --disable-libquadmath --disable-libssp --disable-libstdcxx \
@@ -53,7 +54,7 @@ popd
 pushd build/newlib
 mkdir build && cd build
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH
+    --with-arch=$ARCH --with-abi=$ABI
 make -j$(nproc)
 make install
 popd
@@ -62,7 +63,7 @@ popd
 pushd build/gcc
 mkdir build2 && cd build2
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --enable-languages=c,c++ --disable-fixincludes \
+    --with-arch=$ARCH --with-abi=$ABI --enable-languages=c,c++ --disable-fixincludes \
     --disable-shared --disable-threads --disable-libssp \
     --disable-nls --with-newlib
 make -j$(nproc)
@@ -73,7 +74,7 @@ popd
 pushd build/gdb
 mkdir build && cd build
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --disable-werror
+    --with-arch=$ARCH --with-abi=$ABI --disable-werror
 make -j$(nproc)
 make install
 popd
