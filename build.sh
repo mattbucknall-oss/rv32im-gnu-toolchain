@@ -10,9 +10,8 @@ set -x
 export TARGET=riscv32-unknown-elf
 export NAME=gcc-$TARGET
 export PREFIX=$PWD/build-root
-export ARCH=rv32im
-export ABI=ilp32
 export PATH=$PREFIX/bin:$PATH
+export ARCH=rv32im
 
 # create build directories
 mkdir -p build/binutils
@@ -31,42 +30,26 @@ wait
 pushd build/binutils
 mkdir build && cd build
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --with-abi=$ABI --disable-werror
+    --enable-tls --disable-werror \
+    --enable-soft-float
 make -j$(nproc)
 make install
 popd
 
-# build gcc (stage 1)
+# build gcc with newlib
 pushd build/gcc
+cp -a ../newlib/newlib .
+cp -a ../newlib/libgloss .
 ./contrib/download_prerequisites
-mkdir build1 && cd build1
-../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --with-abi=$ABI --enable-languages=c --disable-fixincludes \
-    --without-headers --disable-shared --disable-threads \
-    --disable-libatomic --disable-libgomp --disable-libmudflap \
-    --disable-libquadmath --disable-libssp --disable-libstdcxx \
-    --disable-nls
-make all-gcc -j$(nproc)
-make install-gcc
-popd
-
-# build newlib
-pushd build/newlib
 mkdir build && cd build
 ../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --with-abi=$ABI
-make -j$(nproc)
-make install
-popd
-
-# build gcc (stage 2)
-pushd build/gcc
-mkdir build2 && cd build2
-../configure --target=$TARGET --prefix=$PREFIX \
-    --with-arch=$ARCH --with-abi=$ABI --enable-languages=c,c++ --disable-fixincludes \
-    --disable-shared --disable-threads --disable-libssp \
-    --disable-nls --with-newlib
-make -j$(nproc)
+    --disable-shared --disable-threads \
+    --enable-tls --enable-languages=c,c++ \
+    --with-newlib --disable-libmudflap \
+    --disable-libssp --disable-libquadmath \
+    --disable-libgomp --disable-nls \
+    --enable-soft-float --with-arch=$ARCH
+make -j$(nproc) inhibit-libc=true
 make install
 popd
 
@@ -80,7 +63,6 @@ make install
 popd
 
 mkdir -p $PREFIX
-touch "$PREFIX/foo"
 
 # package toolchain
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
